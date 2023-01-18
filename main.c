@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include "graph.h"
 #include "algo.h"
 
@@ -21,22 +20,19 @@ int main(){
         {
             ch=BuildGrapgh(&head);
             flag=1;
-            printGraph(head);
         }
         else if(ch=='B'){
             insertNode(&head);
-            printGraph(head);
-        } 
+        }
         else if(ch=='D'){
             deleteNode(&head);
-            printGraph(head);
-        } 
+        }
         else if(ch=='S'){
             shortsPath(head);
         }
         else if(ch=='T'){
-            
-        }     
+            TSP(head);
+        }
     }
     deleteGraph(&head);
     return 0;

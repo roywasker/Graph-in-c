@@ -23,6 +23,9 @@ void deleteNode(pnode *head);
 void printGraph(pnode head); //for self debug
 void deleteGraph(pnode *head);
 void shortsPath(pnode head);
-void TSP_cmd(pnode head);
+void TSP(pnode head);
+void deleteEdgeToNode(pnode head, int nodenum);
+void insertEdge(pnode scr, pnode des, int weight);
+void deleteNodeEdge(pnode *head);
 
 #endif

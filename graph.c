@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "graph.h"
+#include "algo.h"
 
 pnode findNode(pnode head, int nodenum)
 {
@@ -19,6 +20,10 @@ void insertEdge(pnode scr, pnode des, int weight)
         return;
     }
     pedge newedge = (pedge)malloc(sizeof(edge));
+    if(newedge == NULL){
+        printf("fail to alloc memory\n");
+        return;
+    }
     newedge->next = NULL;
     newedge->weight = weight;
     newedge->endpoint = des;
@@ -45,6 +50,10 @@ char BuildGrapgh(pnode *head)
     for (int i = 0; i < size; i++)
     {
         pnode newnode = (pnode)malloc(sizeof(node));
+        if(newnode == NULL){
+            printf("fail to alloc memory\n");
+            return;
+        }
         newnode->next = NULL;
         newnode->node_num = i;
         newnode->edges = NULL;
@@ -110,6 +119,7 @@ void printGraph(pnode head){
         printf("\n\n");
         head = head->next;
     }
+    printf("\n\n\n");
 }
 void deleteNodeEdge(pnode *head){
     pnode temp=*head;
@@ -125,6 +135,7 @@ void deleteNodeEdge(pnode *head){
 
 void insertNode(pnode *head) {
     int nodenum = -1;
+    int maxid = maxNumOfVertex(*head);
     scanf("%d", &nodenum);
     pnode newnode = NULL;
     newnode = findNode(*head, nodenum);
@@ -132,11 +143,28 @@ void insertNode(pnode *head) {
         deleteNodeEdge(&newnode);
     } else {
         newnode = (pnode) malloc(sizeof(node));
-        newnode->next = findNode(*head, nodenum + 1);
+        if(newnode == NULL){
+            printf("fail to alloc memory\n");
+            return;
+        }
+        pnode nextnode = NULL;
+        int i=1;
+        while (nextnode==NULL&&nodenum+i < maxid ) {
+            nextnode = findNode(*head, nodenum + i++);
+        }
+        newnode->next = nextnode;
         newnode->node_num = nodenum;
         newnode->edges = NULL;
-        pnode temp=findNode(*head, nodenum - 1);
-        temp->next=newnode;
+        pnode prenode = NULL;
+        i=1;
+        while (prenode==NULL&&nodenum-i>0) {
+            prenode = findNode(*head, nodenum - i++);
+        }
+        if(prenode!=NULL){
+            prenode->next=newnode;
+        } else{
+            *head=newnode;
+        }
     }
     int weight, des;
     while (scanf("%d %d", &des, &weight) > 1) {
@@ -144,6 +172,7 @@ void insertNode(pnode *head) {
         insertEdge(newnode, desnode, weight);
     }
 }
+
 void deleteEdgeToNode(pnode head, int nodenum){
     while (head!=NULL)
     {
@@ -155,6 +184,7 @@ void deleteEdgeToNode(pnode head, int nodenum){
             pedge temp =edge;
             head->edges=edge->next;
             free(temp);
+            edge=head->edges;
         }
         while (edge!=NULL&&edge->next!=NULL)
         {
@@ -179,7 +209,16 @@ void deleteNode(pnode *head){
     }
     deleteNodeEdge(&delnode);
     deleteEdgeToNode(*head,nodenum);
-    pnode temp=findNode(*head, nodenum - 1);
-    temp->next = findNode(*head, nodenum + 1);
+    pnode prev = NULL;
+    pnode current = *head;
+    while (current != NULL && current->node_num != nodenum) {
+        prev = current;
+        current = current->next;
+    }
+    if(prev!=NULL){
+        prev->next=delnode->next;
+    } else{
+        *head=delnode->next;
+    }
     free(delnode);
 }
